@@ -1,0 +1,179 @@
+.theme-selector {
+  position: relative;
+  display: inline-block;
+}
+
+.theme-selector-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.theme-selector-button:hover {
+  background: #e8e8e8;
+  border-color: #d0d0d0;
+}
+
+.theme-selector-label {
+  font-weight: 500;
+}
+
+.theme-selector-current {
+  color: #666;
+  font-size: 13px;
+}
+
+.theme-selector-arrow {
+  transition: transform 0.2s ease;
+  margin-left: 4px;
+}
+
+.theme-selector-arrow.open {
+  transform: rotate(180deg);
+}
+
+.theme-selector-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  min-width: 280px;
+  max-height: 500px;
+  overflow-y: auto;
+  border: 1px solid #e0e0e0;
+}
+
+.theme-selector-list {
+  padding: 8px;
+}
+
+.theme-selector-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.theme-selector-item:hover {
+  background: #f5f5f5;
+}
+
+.theme-selector-item.active {
+  background: #e6f7ff;
+  border: 1px solid #91d5ff;
+}
+
+.theme-selector-item-info {
+  flex: 1;
+}
+
+.theme-selector-item-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.theme-selector-item-colors {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.theme-color-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  display: inline-block;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.theme-color-more {
+  font-size: 11px;
+  color: #999;
+  margin-left: 4px;
+}
+
+.theme-selector-check {
+  color: #1890ff;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+/* 自定义主题标识 */
+.theme-custom-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 6px;
+  background: #e6f7ff;
+  color: #1890ff;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* 底部添加按钮 */
+.theme-selector-footer {
+  padding: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.theme-selector-add-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  background: #f5f5f5;
+  border: 1px dashed #d0d0d0;
+  border-radius: 6px;
+  color: #666;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-selector-add-button:hover {
+  background: #e8e8e8;
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+/* 滚动条样式 */
+.theme-selector-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.theme-selector-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.theme-selector-dropdown::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.theme-selector-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
