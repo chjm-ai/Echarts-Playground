@@ -1,7 +1,30 @@
 {
-  "name": "echarts-dashboard",
+  "name": "echarts-playground",
   "version": "1.0.0",
+  "description": "一个可视化的 ECharts 图表样式调试工具，帮助设计师和开发者快速调试图表样式",
   "type": "module",
+  "keywords": [
+    "echarts",
+    "chart",
+    "visualization",
+    "playground",
+    "config",
+    "react",
+    "data-visualization",
+    "图表",
+    "可视化",
+    "配置工具"
+  ],
+  "author": "chjm-ai",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chjm-ai/Echarts-Playground.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chjm-ai/Echarts-Playground/issues"
+  },
+  "homepage": "https://github.com/chjm-ai/Echarts-Playground#readme",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

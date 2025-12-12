@@ -1,5 +1,10 @@
 # ECharts Playground
 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Node Version](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen.svg)
+![React](https://img.shields.io/badge/react-18.2.0-blue.svg)
+![ECharts](https://img.shields.io/badge/echarts-5.4.3-orange.svg)
+
 一个可视化的 ECharts 图表样式调试工具，帮助设计师和开发者快速调试图表样式，并导出配置到自己的项目中。
 
 ## 📖 项目简介
