@@ -111,48 +111,6 @@ const chart = echarts.init(document.getElementById('chart'));
 chart.setOption(option);
 ```
 
-## 🎯 功能特性详解
-
-### 通用配置
-
-所有图表共享的配置项：
-
-- **Tooltip（提示框）**：触发方式、背景色、边框、文字样式、指示器样式
-- **Legend（图例）**：显示/隐藏、位置、方向、间距、文字样式
-- **Grid（网格）**：显示背景、边距设置
-- **坐标轴**：标签样式、轴线样式、网格线样式
-- **标题**：主标题、副标题、位置、样式
-
-### 图表独立配置
-
-每个图表类型都有其特有的配置项，例如：
-
-**折线图**：
-- 平滑曲线、线条宽度、线条类型、线条颜色
-- 数据点显示、数据点形状和大小
-- 区域填充、阶梯线、堆叠
-- 标签位置和样式
-
-**柱状图**：
-- 圆角、柱宽、柱间距
-- 标签位置和样式
-
-**饼图**：
-- 标签位置、引导线样式
-- 圆角、中心位置、半径
-- 玫瑰图模式、起始角度
-
-更多配置项请在实际使用中探索。
-
-### 数据场景
-
-内置 4 种数据场景，方便测试：
-
-- **正常数据**：标准的数据量和维度
-- **数据非常多**：测试大数据量下的图表表现
-- **数据非常少**：测试少量数据下的图表表现
-- **维度特别多**：测试多维度数据下的图表表现
-
 ## 🛠️ 技术栈
 
 - **React 18.2.0** - UI 框架
@@ -169,67 +127,16 @@ echarts-playground/
 ├── src/
 │   ├── components/          # 组件目录
 │   │   ├── charts/          # 图表组件
-│   │   │   ├── LineChart.jsx
-│   │   │   ├── BarChart.jsx
-│   │   │   ├── PieChart.jsx
-│   │   │   └── ...
 │   │   ├── Dashboard.jsx    # 主仪表板
-│   │   ├── ConfigSidebar.jsx # 通用配置侧边栏
-│   │   ├── ChartConfigPanel.jsx # 图表配置面板
 │   │   └── ...
 │   ├── config/              # 配置文件
-│   │   ├── chartDefaults.js # 图表默认配置
-│   │   ├── colors.js        # 颜色配置
-│   │   └── themes.js        # 主题配置
 │   ├── data/                # 数据文件
-│   │   └── scenarios.js     # 数据场景
 │   ├── utils/               # 工具函数
-│   │   └── configMerge.js   # 配置合并工具
 │   └── context/             # React Context
-│       └── ThemeContext.jsx # 主题上下文
 ├── index.html
 ├── package.json
 └── vite.config.js
 ```
-
-## 🗺️ 开发计划
-
-### 近期计划
-
-- [ ] 支持更多图表类型（面积图、仪表盘、漏斗图等）
-- [ ] 配置预设管理（保存、加载、分享配置预设）
-- [ ] 配置导入功能（支持导入已有配置进行编辑）
-- [ ] 更多主题支持
-- [ ] 配置验证和错误提示
-
-### 长期计划
-
-- [ ] 支持自定义数据源
-- [ ] 配置模板市场
-- [ ] 多语言支持
-- [ ] 性能优化
-- [ ] 单元测试和 E2E 测试
-
-## 🤝 贡献指南
-
-我们欢迎所有形式的贡献！请查看 [CONTRIBUTING.md](CONTRIBUTING.md) 了解详细的贡献指南。
-
-### 快速开始
-
-1. Fork 本项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
-
-### 贡献方向
-
-- 🐛 修复 Bug
-- ✨ 添加新功能
-- 📝 完善文档
-- 🎨 优化 UI/UX
-- ⚡ 性能优化
-- 🌍 国际化支持
 
 ## 📝 许可证
 
@@ -241,14 +148,6 @@ echarts-playground/
 - [React](https://react.dev/) - 优秀的 UI 框架
 - [Vite](https://vitejs.dev/) - 快速的构建工具
 
-## 📮 反馈与建议
-
-如果您有任何问题、建议或反馈，欢迎：
-
-- 提交 [Issue](https://github.com/chjm-ai/Echarts-Playground/issues)
-- 开启 [Discussion](https://github.com/chjm-ai/Echarts-Playground/discussions)
-
 ---
 
 ⭐ 如果这个项目对您有帮助，请给我们一个 Star！
-

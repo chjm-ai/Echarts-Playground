@@ -28,9 +28,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "deploy": "bash deploy.sh",
-    "deploy:docker": "bash deploy-docker.sh"
+    "preview": "vite preview"
   },
   "dependencies": {
     "echarts": "^5.4.3",

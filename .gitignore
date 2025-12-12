@@ -33,6 +33,13 @@ dist-ssr
 build
 *.tsbuildinfo
 
-# 部署配置文件（包含敏感信息）
+# 部署相关文件（包含敏感信息，仅本地保留）
 deploy.config
+deploy*.sh
+request-cert.sh
+*nginx*.conf
+*echarts*.conf
+Dockerfile
+docker-compose.yml
+.dockerignore
 
