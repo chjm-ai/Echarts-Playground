@@ -42,4 +42,5 @@ request-cert.sh
 Dockerfile
 docker-compose.yml
 .dockerignore
+DEPLOY.md
 
