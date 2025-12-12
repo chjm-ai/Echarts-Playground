@@ -33,3 +33,6 @@ dist-ssr
 build
 *.tsbuildinfo
 
+# 部署配置文件（包含敏感信息）
+deploy.config
+
