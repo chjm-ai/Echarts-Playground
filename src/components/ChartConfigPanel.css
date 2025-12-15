@@ -78,44 +78,62 @@
 }
 
 .text-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 8px 16px;
-  border: none;
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--text-secondary);
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #333;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .text-button:hover {
-  background-color: var(--bg-app);
-  color: var(--text-main);
+  background: #e8e8e8;
+  border-color: #d0d0d0;
 }
 
 .text-button.cancel:hover {
   color: #ef4444;
-  background-color: #fef2f2;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.text-button.success {
+  color: #52c41a;
+  background: #f6ffed;
+  border-color: #b7eb8f;
+}
+
+.text-button.success:hover {
+  background: #d9f7be;
+  border-color: #95de64;
 }
 
 .primary-button {
   display: flex;
   align-items: center;
-  padding: 8px 20px;
-  background-color: var(--primary);
-  color: white;
-  border: none;
-  border-radius: var(--radius-md);
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #333;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s;
-  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .primary-button:hover {
-  background-color: var(--primary-hover);
+  background: #e8e8e8;
+  border-color: #d0d0d0;
 }
 
 .config-fullscreen-body {

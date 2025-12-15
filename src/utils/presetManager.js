@@ -5,6 +5,7 @@ import { defaultTheme } from '../config/themes'
 import { defaultCommonConfig, defaultChartConfigs } from '../config/chartDefaults'
 
 const PRESET_STORAGE_KEY = 'echarts-presets'
+const CURRENT_PRESET_ID_KEY = 'echarts-current-preset-id'
 const DEFAULT_PRESET_ID = 'echarts-default'
 
 // 默认布局配置
@@ -226,6 +227,29 @@ export const importPreset = (jsonString) => {
   } catch (error) {
     console.error('导入方案失败:', error)
     throw error
+  }
+}
+
+// 保存当前方案ID
+export const saveCurrentPresetId = (presetId) => {
+  try {
+    if (presetId) {
+      localStorage.setItem(CURRENT_PRESET_ID_KEY, presetId)
+    } else {
+      localStorage.removeItem(CURRENT_PRESET_ID_KEY)
+    }
+  } catch (error) {
+    console.error('保存当前方案ID失败:', error)
+  }
+}
+
+// 获取当前方案ID
+export const getCurrentPresetId = () => {
+  try {
+    return localStorage.getItem(CURRENT_PRESET_ID_KEY) || null
+  } catch (error) {
+    console.error('获取当前方案ID失败:', error)
+    return null
   }
 }
 

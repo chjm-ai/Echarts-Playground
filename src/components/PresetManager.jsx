@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Save, Trash2, X, Plus, Download, Upload, Edit2 } from 'lucide-react'
-import { getAllPresets, savePreset, updatePreset, loadPreset, deletePreset, exportPreset, importPreset, isDefaultPreset, isPresetNameDuplicate } from '../utils/presetManager'
+import { Save, Trash2, X, Download, Upload, Edit2, Copy } from 'lucide-react'
+import { getAllPresets, savePreset, updatePreset, loadPreset, deletePreset, exportPreset, importPreset, isDefaultPreset, isPresetNameDuplicate, saveCurrentPresetId } from '../utils/presetManager'
+import { comparePresetConfigs } from '../utils/configCompare'
 import './PresetManager.css'
 
 function PresetManager({ 
@@ -8,13 +9,14 @@ function PresetManager({
   commonConfig, 
   chartConfigs, 
   layout,
-  onLoadPreset 
+  currentPresetId, // 从父组件接收当前方案ID
+  onLoadPreset,
+  onPresetIdChange // 通知父组件更新方案ID
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [presets, setPresets] = useState([])
   const [showSaveDialog, setShowSaveDialog] = useState(false)
   const [presetName, setPresetName] = useState('')
-  const [currentPresetId, setCurrentPresetId] = useState(null) // 当前加载的方案ID
   const [showImportDialog, setShowImportDialog] = useState(false)
   const [importJson, setImportJson] = useState('')
   const [nameError, setNameError] = useState('')
@@ -22,6 +24,7 @@ function PresetManager({
   const [renamingPresetId, setRenamingPresetId] = useState(null)
   const [renameName, setRenameName] = useState('')
   const [renameError, setRenameError] = useState('')
+  const [originalPresetConfig, setOriginalPresetConfig] = useState(null) // 已加载方案的原始配置快照
   const dropdownRef = useRef(null)
 
   // 加载方案列表
@@ -30,6 +33,45 @@ function PresetManager({
       setPresets(getAllPresets())
     }
   }, [isOpen])
+
+  // 当 currentPresetId 变化时，恢复原始配置快照（防止组件重新挂载时丢失）
+  useEffect(() => {
+    if (currentPresetId && !isDefaultPreset(currentPresetId)) {
+      const preset = loadPreset(currentPresetId)
+      if (preset) {
+        // 只有当 originalPresetConfig 为空或与当前方案不匹配时才更新
+        // 避免在用户修改配置后，因为 currentPresetId 变化而覆盖原始快照
+        const newOriginalConfig = {
+          theme: preset.theme,
+          commonConfig: preset.commonConfig,
+          chartConfigs: preset.chartConfigs,
+          layout: preset.layout
+        }
+        
+        // 如果 originalPresetConfig 为空，或者当前配置与原始配置相同，则更新
+        // 这样可以处理页面刷新后恢复的情况
+        if (!originalPresetConfig) {
+          setOriginalPresetConfig(newOriginalConfig)
+        } else {
+          // 检查当前配置是否与原始配置相同（说明没有未保存的修改）
+          const currentConfig = {
+            theme: currentTheme,
+            commonConfig,
+            chartConfigs,
+            layout
+          }
+          if (comparePresetConfigs(newOriginalConfig, currentConfig)) {
+            // 如果相同，说明配置已经同步，可以更新原始快照
+            setOriginalPresetConfig(newOriginalConfig)
+          }
+        }
+      }
+    } else if (!currentPresetId) {
+      // 如果没有当前方案，清除原始配置快照
+      setOriginalPresetConfig(null)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPresetId]) // 当 currentPresetId 变化时，重新加载原始配置快照
 
   // 点击外部关闭下拉菜单
   useEffect(() => {
@@ -47,6 +89,111 @@ function PresetManager({
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [isOpen])
+
+  // 检测配置是否被修改
+  const hasUnsavedChanges = () => {
+    if (!currentPresetId || isDefaultPreset(currentPresetId) || !originalPresetConfig) {
+      return false
+    }
+    
+    const currentConfig = {
+      theme: currentTheme,
+      commonConfig,
+      chartConfigs,
+      layout
+    }
+    
+    return !comparePresetConfigs(originalPresetConfig, currentConfig)
+  }
+
+  // 快速保存当前方案（无弹窗）
+  const handleQuickSave = () => {
+    if (!currentPresetId || isDefaultPreset(currentPresetId)) {
+      // 如果没有当前方案或是默认方案，打开保存对话框
+      handleOpenSaveDialog()
+      return
+    }
+
+    // 获取当前方案信息
+    const currentPreset = loadPreset(currentPresetId)
+    if (!currentPreset) {
+      alert('当前方案不存在，请重新加载')
+      return
+    }
+
+    try {
+      const success = updatePreset(currentPresetId, currentPreset.name, {
+        theme: currentTheme,
+        commonConfig,
+        chartConfigs,
+        layout
+      })
+
+      if (success) {
+        // 更新原始配置快照
+        setOriginalPresetConfig({
+          theme: currentTheme,
+          commonConfig,
+          chartConfigs,
+          layout
+        })
+        setPresets(getAllPresets())
+        // 保存当前方案ID到 localStorage
+        saveCurrentPresetId(currentPresetId)
+      }
+    } catch (error) {
+      console.error('方案保存失败:', error)
+    }
+  }
+
+  // 打开保存对话框
+  const handleOpenSaveDialog = () => {
+    // 如果当前有加载的方案且不是默认方案，自动填充名称
+    if (currentPresetId && !isDefaultPreset(currentPresetId)) {
+      const currentPreset = loadPreset(currentPresetId)
+      setPresetName(currentPreset ? currentPreset.name : '')
+    } else {
+      setPresetName('')
+    }
+    setNameError('')
+    setShowSaveDialog(true)
+  }
+
+  // 复制方案
+  const handleCopyPreset = (presetId, e) => {
+    e.stopPropagation()
+    const preset = loadPreset(presetId)
+    if (!preset) {
+      alert('方案不存在')
+      return
+    }
+
+    // 生成新名称（原名称 + 时间戳）
+    const timestamp = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    let newName = `${preset.name} (副本 ${timestamp})`
+    
+    // 如果名称重复，继续添加时间戳
+    let counter = 1
+    while (isPresetNameDuplicate(newName)) {
+      newName = `${preset.name} (副本 ${timestamp} ${counter})`
+      counter++
+    }
+
+    try {
+      const newId = savePreset(newName, {
+        theme: preset.theme,
+        commonConfig: preset.commonConfig,
+        chartConfigs: preset.chartConfigs,
+        layout: preset.layout
+      })
+
+      if (newId) {
+        setPresets(getAllPresets())
+      }
+    } catch (error) {
+      console.error('方案复制失败:', error)
+    }
+  }
 
   // 保存当前配置为方案
   const handleSave = (isUpdate = false) => {
@@ -68,6 +215,8 @@ function PresetManager({
 
     try {
       let success = false
+      let savedPresetId = currentPresetId
+      
       if (isUpdate && currentPresetId) {
         // 更新当前方案
         success = updatePreset(currentPresetId, trimmedName, {
@@ -85,19 +234,28 @@ function PresetManager({
           layout
         })
         if (id) {
-          setCurrentPresetId(id) // 保存后设置为当前方案
+          savedPresetId = id
+          onPresetIdChange?.(id) // 通知父组件更新当前方案ID
           success = true
         }
       }
 
       if (success) {
+        // 更新原始配置快照
+        setOriginalPresetConfig({
+          theme: currentTheme,
+          commonConfig,
+          chartConfigs,
+          layout
+        })
         setPresets(getAllPresets())
         setShowSaveDialog(false)
         setPresetName('')
         setNameError('')
-        alert(isUpdate ? '方案更新成功！' : '方案保存成功！')
-      } else {
-        alert(isUpdate ? '方案更新失败，请重试' : '方案保存失败，请重试')
+        // 保存当前方案ID到 localStorage
+        if (savedPresetId) {
+          saveCurrentPresetId(savedPresetId)
+        }
       }
     } catch (error) {
       setNameError(error.message || (isUpdate ? '方案更新失败，请重试' : '方案保存失败，请重试'))
@@ -108,7 +266,16 @@ function PresetManager({
   const handleLoad = (presetId) => {
     const preset = loadPreset(presetId)
     if (preset) {
-      setCurrentPresetId(presetId) // 记录当前加载的方案ID
+      onPresetIdChange?.(presetId) // 通知父组件更新当前方案ID
+      // 保存当前方案ID到 localStorage
+      saveCurrentPresetId(presetId)
+      // 保存原始配置快照
+      setOriginalPresetConfig({
+        theme: preset.theme,
+        commonConfig: preset.commonConfig,
+        chartConfigs: preset.chartConfigs,
+        layout: preset.layout
+      })
       onLoadPreset(preset)
       setIsOpen(false)
     } else {
@@ -129,9 +296,11 @@ function PresetManager({
     if (window.confirm('确定要删除这个方案吗？')) {
       try {
         if (deletePreset(presetId)) {
-          // 如果删除的是当前方案，清除当前方案ID
+          // 如果删除的是当前方案，清除当前方案ID和原始配置快照
           if (currentPresetId === presetId) {
-            setCurrentPresetId(null)
+            onPresetIdChange?.(null) // 通知父组件清除当前方案ID
+            saveCurrentPresetId(null) // 清除 localStorage 中的当前方案ID
+            setOriginalPresetConfig(null)
           }
           setPresets(getAllPresets())
           alert('方案已删除')
@@ -276,22 +445,15 @@ function PresetManager({
             <h3>配置方案</h3>
             <div className="preset-manager-actions">
               <button
-                className="preset-action-button"
-                onClick={() => {
-                  // 如果当前有加载的方案且不是默认方案，自动填充名称
-                  if (currentPresetId && !isDefaultPreset(currentPresetId)) {
-                    const currentPreset = loadPreset(currentPresetId)
-                    setPresetName(currentPreset ? currentPreset.name : '')
-                  } else {
-                    setPresetName('')
-                  }
-                  setNameError('')
-                  setShowSaveDialog(true)
-                }}
-                title="保存当前配置"
+                className={`preset-action-button ${hasUnsavedChanges() ? 'has-changes' : ''}`}
+                onClick={handleQuickSave}
+                title="保存方案"
               >
                 <Save size={16} />
                 <span>保存方案</span>
+                {hasUnsavedChanges() && (
+                  <span className="unsaved-indicator" title="有未保存的修改"></span>
+                )}
               </button>
               <button
                 className="preset-action-button"
@@ -339,6 +501,13 @@ function PresetManager({
                     </div>
                   </div>
                   <div className="preset-item-actions" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      className="preset-item-action"
+                      onClick={(e) => handleCopyPreset(preset.id, e)}
+                      title="复制方案"
+                    >
+                      <Copy size={14} />
+                    </button>
                     {!isDefaultPreset(preset.id) && (
                       <button
                         className="preset-item-action"

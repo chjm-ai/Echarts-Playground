@@ -62,9 +62,42 @@
 .sidebar-actions {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
-.action-button, .close-button {
+.text-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f5f5f5;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.text-button:hover {
+  background: #e8e8e8;
+  border-color: #d0d0d0;
+}
+
+.text-button.success {
+  color: #52c41a;
+  background: #f6ffed;
+  border-color: #b7eb8f;
+}
+
+.text-button.success:hover {
+  background: #d9f7be;
+  border-color: #95de64;
+}
+
+.close-button {
   width: 36px;
   height: 36px;
   border-radius: var(--radius-md);
@@ -78,14 +111,9 @@
   transition: all 0.2s;
 }
 
-.action-button:hover, .close-button:hover {
+.close-button:hover {
   background-color: var(--bg-app);
   color: var(--text-main);
-}
-
-.action-button.success {
-  color: #10b981;
-  background-color: #ecfdf5;
 }
 
 .sidebar-content {

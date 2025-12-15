@@ -132,6 +132,7 @@ function BarChart({ data, commonConfig, config }) {
         splitLine: mergedCommonConfig.axis.splitLine
       },
       series,
+      barGap: mergedConfig.barGap,
       title: mergedCommonConfig.title.show ? mergedCommonConfig.title : undefined
     }
   }, [data, mergedCommonConfig, mergedConfig, themeColors])

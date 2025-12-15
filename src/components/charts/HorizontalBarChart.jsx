@@ -57,6 +57,7 @@ function HorizontalBarChart({ data, commonConfig, config }) {
           color: mergedConfig.labelColor
         } : { show: false }
       }],
+      barGap: mergedConfig.barGap,
       title: mergedCommonConfig.title.show ? mergedCommonConfig.title : undefined
     }
   }, [data, mergedCommonConfig, mergedConfig, themeColors])

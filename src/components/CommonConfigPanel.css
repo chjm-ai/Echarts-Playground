@@ -5,6 +5,12 @@
   gap: 24px;
 }
 
+.config-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .config-section {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
@@ -139,6 +145,10 @@
   position: relative;
   transition: all 0.2s;
   background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .checkbox-label input[type="checkbox"]:checked ~ .checkbox-custom {
@@ -149,13 +159,13 @@
 .checkbox-label input[type="checkbox"]:checked ~ .checkbox-custom::after {
   content: "";
   position: absolute;
-  left: 5px;
-  top: 2px;
+  left: 50%;
+  top: 50%;
   width: 4px;
   height: 8px;
   border: solid white;
   border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+  transform: translate(-50%, -60%) rotate(45deg);
 }
 
 .checkbox-label span:last-child {

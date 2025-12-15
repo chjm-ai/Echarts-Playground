@@ -29,6 +29,7 @@ import PresetManager from './PresetManager'
 import { useTheme } from '../context/ThemeContext'
 import { dataScenarios } from '../data/scenarios'
 import { defaultCommonConfig, defaultChartConfigs } from '../config/chartDefaults'
+import { getCurrentPresetId, loadPreset } from '../utils/presetManager'
 import './Dashboard.css'
 
 function Dashboard() {
@@ -36,6 +37,10 @@ function Dashboard() {
   const [currentScenario, setCurrentScenario] = useState('normal')
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [configuringChartId, setConfiguringChartId] = useState(null) // 当前正在配置的图表ID
+  const [currentPresetId, setCurrentPresetId] = useState(() => {
+    // 从 localStorage 恢复当前方案ID
+    return getCurrentPresetId()
+  })
   
   // 通用配置（所有图表共用）
   const [commonConfig, setCommonConfig] = useState(defaultCommonConfig)
@@ -116,6 +121,20 @@ function Dashboard() {
       setLayout(preset.layout)
     }
   }
+
+  // 页面加载时，如果有保存的当前方案ID，自动加载
+  useEffect(() => {
+    if (currentPresetId) {
+      const preset = loadPreset(currentPresetId)
+      if (preset) {
+        handleLoadPreset(preset)
+      } else {
+        // 如果方案不存在，清除当前方案ID
+        setCurrentPresetId(null)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // 只在组件挂载时执行一次
 
   // 初始布局配置（每个图表的位置和大小）
   // GridLayout 使用网格单位，默认每列 12 个单位
@@ -350,7 +369,9 @@ function Dashboard() {
               commonConfig={commonConfig}
               chartConfigs={chartConfigs}
               layout={layout}
+              currentPresetId={currentPresetId}
               onLoadPreset={handleLoadPreset}
+              onPresetIdChange={setCurrentPresetId}
             />
           </div>
           

@@ -117,7 +117,7 @@ export const defaultChartConfigs = {
   barChart: {
     showLabel: false,
     showLegend: true,
-    borderRadius: 0, // ECharts 默认无圆角
+    borderRadius: [0, 0, 0, 0], // ECharts 默认无圆角，数组格式：[topLeft, topRight, bottomRight, bottomLeft]
     barMaxWidth: null, // ECharts 默认不限制最大宽度
     barWidth: null, // 固定宽度，null 表示自适应
     barMinHeight: 0, // 最小高度
@@ -204,7 +204,7 @@ export const defaultChartConfigs = {
   horizontalBarChart: {
     showLabel: false,
     showLegend: false,
-    borderRadius: 0, // ECharts 默认无圆角
+    borderRadius: [0, 0, 0, 0], // ECharts 默认无圆角，数组格式：[topLeft, topRight, bottomRight, bottomLeft]
     barMaxWidth: null, // ECharts 默认不限制最大宽度
     barWidth: null,
     barMinHeight: 0,

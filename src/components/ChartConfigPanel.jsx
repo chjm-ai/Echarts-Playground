@@ -535,8 +535,17 @@ function ChartConfigPanel({
               <input
                 type="text"
                 className="text-input"
-                value={getNestedValue('barGap') || '20%'}
-                onChange={(e) => updateConfig('barGap', e.target.value)}
+                value={getNestedValue('barGap') || '30%'}
+                onChange={(e) => {
+                  const value = e.target.value.trim()
+                  // 如果输入的是数字，转换为百分比字符串
+                  if (value && !isNaN(value) && !value.includes('%')) {
+                    updateConfig('barGap', `${value}%`)
+                  } else {
+                    updateConfig('barGap', value || '30%')
+                  }
+                }}
+                placeholder="如: 30% 或 20"
               />
             </div>
           </div>
@@ -545,31 +554,70 @@ function ChartConfigPanel({
         <div className="config-section">
           {renderSectionHeader('样式配置')}
           <div className="config-grid">
-            <div className="form-item">
-              <label>颜色</label>
-              <div className="color-input-wrapper">
-                <input
-                  type="color"
-                  value={getNestedValue('itemStyle.color') || '#6085E4'}
-                  onChange={(e) => updateConfig('itemStyle.color', e.target.value)}
-                />
-                <span className="color-value">{getNestedValue('itemStyle.color') || '#6085E4'}</span>
-              </div>
-            </div>
-            
-            <div className="form-item">
+            <div className="form-item full-width">
               <label>圆角 (borderRadius)</label>
               <input
-                type="number"
+                type="text"
                 className="text-input"
-                value={getNestedValue('itemStyle.borderRadius') || getNestedValue('borderRadius') || 0}
+                value={(() => {
+                  const borderRadius = getNestedValue('itemStyle.borderRadius') || getNestedValue('borderRadius')
+                  if (Array.isArray(borderRadius)) {
+                    return borderRadius.join(',')
+                  } else if (typeof borderRadius === 'number') {
+                    // 如果是单个数字，转换为数组格式显示
+                    return `${borderRadius},${borderRadius},${borderRadius},${borderRadius}`
+                  } else {
+                    return '0,0,0,0'
+                  }
+                })()}
                 onChange={(e) => {
-                  const value = parseInt(e.target.value) || 0
-                  updateConfig('itemStyle.borderRadius', value)
-                  updateConfig('borderRadius', value)
+                  const value = e.target.value
+                  // 允许用户自由输入，包括逗号
+                  if (value.includes(',')) {
+                    // 数组格式：[topLeft, topRight, bottomRight, bottomLeft]
+                    const parts = value.split(',').map(v => v.trim())
+                    // 只处理已输入的部分，未输入的部分保持为空字符串
+                    if (parts.length === 4 && parts.every(p => p === '' || !isNaN(p))) {
+                      const arrayValue = parts.map(v => v === '' ? 0 : parseInt(v) || 0)
+                      updateConfig('itemStyle.borderRadius', arrayValue)
+                      updateConfig('borderRadius', arrayValue)
+                    }
+                  } else if (value === '') {
+                    // 清空时保持为空，不更新配置
+                    return
+                  } else if (!isNaN(value)) {
+                    // 单个数字：所有角使用相同圆角
+                    const numValue = parseInt(value) || 0
+                    updateConfig('itemStyle.borderRadius', numValue)
+                    updateConfig('borderRadius', numValue)
+                  }
                 }}
-                min="0"
-                max="20"
+                onBlur={(e) => {
+                  const value = e.target.value.trim()
+                  if (value === '') {
+                    // 如果为空，恢复为默认值
+                    e.target.value = '0,0,0,0'
+                    updateConfig('itemStyle.borderRadius', [0, 0, 0, 0])
+                    updateConfig('borderRadius', [0, 0, 0, 0])
+                  } else if (value.includes(',')) {
+                    const parts = value.split(',').map(v => v.trim())
+                    // 确保有4个值，不足的补0
+                    while (parts.length < 4) {
+                      parts.push('0')
+                    }
+                    const arrayValue = parts.slice(0, 4).map(v => parseInt(v) || 0)
+                    e.target.value = arrayValue.join(',')
+                    updateConfig('itemStyle.borderRadius', arrayValue)
+                    updateConfig('borderRadius', arrayValue)
+                  } else if (!isNaN(value)) {
+                    const numValue = parseInt(value) || 0
+                    const arrayValue = [numValue, numValue, numValue, numValue]
+                    e.target.value = arrayValue.join(',')
+                    updateConfig('itemStyle.borderRadius', arrayValue)
+                    updateConfig('borderRadius', arrayValue)
+                  }
+                }}
+                placeholder="如: 0,0,0,0 或 8,8,0,0 (左上,右上,右下,左下)"
               />
             </div>
           </div>
@@ -907,18 +955,87 @@ function ChartConfigPanel({
               />
             </div>
              <div className="form-item">
-              <label>圆角</label>
+              <label>柱间距离 (barGap)</label>
               <input
-                type="number"
+                type="text"
                 className="text-input"
-                value={getNestedValue('itemStyle.borderRadius') || getNestedValue('borderRadius') || 0}
+                value={getNestedValue('barGap') || '30%'}
                 onChange={(e) => {
-                  const value = parseInt(e.target.value) || 0
-                  updateConfig('itemStyle.borderRadius', value)
-                  updateConfig('borderRadius', value)
+                  const value = e.target.value.trim()
+                  // 如果输入的是数字，转换为百分比字符串
+                  if (value && !isNaN(value) && !value.includes('%')) {
+                    updateConfig('barGap', `${value}%`)
+                  } else {
+                    updateConfig('barGap', value || '30%')
+                  }
                 }}
-                min="0"
-                max="20"
+                placeholder="如: 30% 或 20"
+              />
+            </div>
+             <div className="form-item full-width">
+              <label>圆角 (borderRadius)</label>
+              <input
+                type="text"
+                className="text-input"
+                value={(() => {
+                  const borderRadius = getNestedValue('itemStyle.borderRadius') || getNestedValue('borderRadius')
+                  if (Array.isArray(borderRadius)) {
+                    return borderRadius.join(',')
+                  } else if (typeof borderRadius === 'number') {
+                    // 如果是单个数字，转换为数组格式显示
+                    return `${borderRadius},${borderRadius},${borderRadius},${borderRadius}`
+                  } else {
+                    return '0,0,0,0'
+                  }
+                })()}
+                onChange={(e) => {
+                  const value = e.target.value
+                  // 允许用户自由输入，包括逗号
+                  if (value.includes(',')) {
+                    // 数组格式：[topLeft, topRight, bottomRight, bottomLeft]
+                    const parts = value.split(',').map(v => v.trim())
+                    // 只处理已输入的部分，未输入的部分保持为空字符串
+                    if (parts.length === 4 && parts.every(p => p === '' || !isNaN(p))) {
+                      const arrayValue = parts.map(v => v === '' ? 0 : parseInt(v) || 0)
+                      updateConfig('itemStyle.borderRadius', arrayValue)
+                      updateConfig('borderRadius', arrayValue)
+                    }
+                  } else if (value === '') {
+                    // 清空时保持为空，不更新配置
+                    return
+                  } else if (!isNaN(value)) {
+                    // 单个数字：所有角使用相同圆角
+                    const numValue = parseInt(value) || 0
+                    updateConfig('itemStyle.borderRadius', numValue)
+                    updateConfig('borderRadius', numValue)
+                  }
+                }}
+                onBlur={(e) => {
+                  const value = e.target.value.trim()
+                  if (value === '') {
+                    // 如果为空，恢复为默认值
+                    e.target.value = '0,0,0,0'
+                    updateConfig('itemStyle.borderRadius', [0, 0, 0, 0])
+                    updateConfig('borderRadius', [0, 0, 0, 0])
+                  } else if (value.includes(',')) {
+                    const parts = value.split(',').map(v => v.trim())
+                    // 确保有4个值，不足的补0
+                    while (parts.length < 4) {
+                      parts.push('0')
+                    }
+                    const arrayValue = parts.slice(0, 4).map(v => parseInt(v) || 0)
+                    e.target.value = arrayValue.join(',')
+                    updateConfig('itemStyle.borderRadius', arrayValue)
+                    updateConfig('borderRadius', arrayValue)
+                  } else if (!isNaN(value)) {
+                    const numValue = parseInt(value) || 0
+                    const arrayValue = [numValue, numValue, numValue, numValue]
+                    e.target.value = arrayValue.join(',')
+                    updateConfig('itemStyle.borderRadius', arrayValue)
+                    updateConfig('borderRadius', arrayValue)
+                  }
+                }}
+                placeholder="如: 0,0,0,0 或 8,8,0,0 (左上,右上,右下,左下)"
               />
             </div>
           </div>
@@ -938,19 +1055,19 @@ function ChartConfigPanel({
           </div>
           <div className="config-fullscreen-actions">
             <button
-              className={`action-button ${copied ? 'success' : ''}`}
+              className={`text-button ${copied ? 'success' : ''}`}
               onClick={handleCopyConfig}
               title="复制配置JSON"
             >
-              {copied ? <Check size={18} /> : <Copy size={18} />}
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+              <span>复制json</span>
             </button>
             <div className="divider"></div>
             <button className="text-button cancel" onClick={onCancel}>
               取消
             </button>
             <button className="primary-button" onClick={onSave}>
-              <Save size={16} style={{ marginRight: 6 }} />
-              保存更改
+              确定
             </button>
           </div>
         </div>

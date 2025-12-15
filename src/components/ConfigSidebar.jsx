@@ -30,11 +30,12 @@ function ConfigSidebar({ isOpen, onClose, commonConfig, onConfigChange }) {
           </div>
           <div className="sidebar-actions">
             <button 
-              className={`action-button ${copied ? 'success' : ''}`}
+              className={`text-button ${copied ? 'success' : ''}`}
               onClick={handleCopyConfig}
               title="复制配置JSON"
             >
-              {copied ? <Check size={18} /> : <Copy size={18} />}
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+              <span>复制json</span>
             </button>
             <button 
               className="close-button"
